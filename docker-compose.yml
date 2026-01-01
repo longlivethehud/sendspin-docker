@@ -24,4 +24,3 @@ services:
     # Edit the command line below to pass any desired sendspin-cli arguments. 
     # Everything between [" and "] is passed as arguments to sendspin-cli on container start.
     command: ["--headless"]
-# service defintion for sendspin-docker container
