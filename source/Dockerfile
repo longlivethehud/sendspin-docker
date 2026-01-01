@@ -59,7 +59,7 @@ RUN wget https://www.python.org/ftp/python/3.12.4/Python-3.12.4.tgz && \
 ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 
 RUN set -eux; \
-    if gcc -dumpmachine | grep -q aarch64; then \
+    if gcc -dumpmachine | grep -q 64; then \
         echo "ARCH_MODE=64bit" > /tmp/arch; \
     else \
         echo "ARCH_MODE=32bit" > /tmp/arch; \
