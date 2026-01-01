@@ -1,0 +1,26 @@
+# service defintion for sendspin-docker container
+services:
+  sendspin:
+    image: sendspin-docker
+    restart: unless-stopped
+    # Sendspin requires access to audio devices
+    devices:
+      - /dev/snd:/dev/snd
+    group_add:
+      - audio
+    # Set ALSA_CARD environment variable to specify which host sound card to expose to the 
+    #   container (default is "0")
+    environment:
+      ALSA_CARD: "0"
+    # Sendspin requires host networking to run mDNS discovery for a local sendspin server.
+    # You can omit this section if you prefer to use bridge networking, but you will need to 
+    #   manually specify the sendspin server address using the --url argument to sendspin-cli 
+    #   in the command section below.
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_NICE
+    # Edit the command line below to pass any desired sendspin-cli arguments. 
+    # Everything between [" and "] is passed as arguments to sendspin-cli on container start.
+    command: ["--headless"]
