@@ -1,2 +1,2 @@
 # sendspin-docker
-Fully Dockerized Sendspin player/server
+Fully Dockerized instance of the sendspin-cli player.
