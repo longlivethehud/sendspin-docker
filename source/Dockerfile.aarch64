@@ -1,4 +1,4 @@
-FROM debian:stable AS build-armhf
+FROM debian:stable
 
 # ------------------------------------------------------------
 # Install python dependencies
