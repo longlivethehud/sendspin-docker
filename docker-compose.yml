@@ -3,6 +3,10 @@ services:
   sendspin:
     image: ghcr.io/longlivethehud/sendspin-docker:latest
     restart: unless-stopped
+    # Show the pretty sendspin TUI when you attach to the container. Be sure to override 
+    #   command: ["--headless"] to see the TUI.
+    tty: true
+    stdin_open: true
     # Sendspin requires access to audio devices
     devices:
       - /dev/snd:/dev/snd
@@ -19,7 +23,6 @@ services:
     network_mode: host
     cap_add:
       - NET_ADMIN
-      - SYS_ADMIN
       - SYS_NICE
     # Edit the command line below to pass any desired sendspin-cli arguments. 
     # Everything between [" and "] is passed as arguments to sendspin-cli on container start.
