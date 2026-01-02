@@ -1,0 +1,47 @@
+FROM debian:stable AS build-armhf
+
+# ------------------------------------------------------------
+# Install dev packaged dependencies
+# ------------------------------------------------------------
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libavcodec-dev \
+    libavdevice-dev \
+    libavfilter-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libportaudio2 \
+    libswresample-dev \
+    libswscale-dev \
+    pkg-config \
+    python3-dev \
+    libffi-dev \
+    libjpeg-dev
+
+FROM debian:stable AS final-armhf
+
+COPY --from=build-armhf /usr/lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf
+
+COPY --from=build-armhf /usr/include /usr/include
+
+COPY --from=build-armhf /usr/lib /usr/lib
+
+# ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+RUN apt-get update && apt-get install -y \
+    alsa-utils \
+    bash \
+    libportaudio2 \
+    pkg-config \
+    python3 \
+    python3-pip \
+    pipx
+
+WORKDIR /app
+
+RUN pipx install sendspin && \
+    pipx ensurepath
+
+ENV PATH="/root/.local/bin:${PATH}"
+
+ENTRYPOINT ["/bin/sh", "-c", "$0 \"$@\"", "sendspin"]
