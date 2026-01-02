@@ -1,7 +1,7 @@
 # service defintion for sendspin-docker container
 services:
   sendspin:
-    image: sendspin-docker
+    image: ghcr.io/longlivethehud/sendspin-docker:latest
     restart: unless-stopped
     # Sendspin requires access to audio devices
     devices:
