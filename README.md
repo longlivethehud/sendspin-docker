@@ -1,7 +1,7 @@
 # sendspin-docker
 sendspin-docker is a fully dockerized instance of the cli player from [Sendspin](https://www.sendspin-audio.com/), the in-development synchronized playback protocol from the Open Home Foundaton, and new default player provider  used in [Music Assistant](https://www.music-assistant.io/).
 
-The docker container runs the Python [sendspin-cli](https://github.com/Sendspin/sendspin-cli) in headless mode. It will work natively as a player for [Music Assistant](https://www.music-assistant.io/) v2.7 and greater.
+The docker container runs the Python [sendspin-cli](https://github.com/Sendspin/sendspin-cli) in daemon mode. It will work natively as a player for [Music Assistant](https://www.music-assistant.io/) v2.7 and greater.
 
 # The basics
 - prebuilt Debian Trixie containers for amd64, arm64 and armvh
@@ -19,7 +19,7 @@ docker compose up
 ```
 
 # Runtime customization
-The only flag passsed to sendspin by defualt is *--headless*. You can override this and pass any sendspin flag you like by either editing **docker-compose.yml** or using `docker compose run sendspin <some flags>`. For example, to see runnnig sendspin servers on your local network...
+The only flag passsed to sendspin by defualt is *daemon*. You can override this and pass any sendspin flag you like by either editing **docker-compose.yml** or using `docker compose run sendspin <some flags>`. For example, to see runnnig sendspin servers on your local network...
 ```bash
 docker compose run sendspin --list-servers
 ```
