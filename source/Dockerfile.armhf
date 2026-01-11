@@ -1,3 +1,6 @@
+# ------------------------------------------------------------
+# Build file for 32 bit ARM architectures
+# ------------------------------------------------------------
 FROM debian:stable AS build-armhf
 
 # ------------------------------------------------------------
@@ -18,16 +21,23 @@ RUN apt-get update && apt-get install -y \
     libffi-dev \
     libjpeg-dev
 
+# ------------------------------------------------------------
+# Pull a separate base image for a clean final build
+# ------------------------------------------------------------
 FROM debian:stable AS final-armhf
 
+# ------------------------------------------------------------
+# Copy necessary libraries from the build image to the final image
+# ------------------------------------------------------------
 COPY --from=build-armhf /usr/lib/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf
 
 COPY --from=build-armhf /usr/include /usr/include
 
 COPY --from=build-armhf /usr/lib /usr/lib
 
-# ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-
+# ------------------------------------------------------------
+# Install runtime dependencies
+# ------------------------------------------------------------
 RUN apt-get update && apt-get install -y \
     alsa-utils \
     bash \
@@ -39,9 +49,15 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# ------------------------------------------------------------
+# Install sendspin
+# ------------------------------------------------------------
 RUN pipx install sendspin && \
     pipx ensurepath
 
 ENV PATH="/root/.local/bin:${PATH}"
 
+# ------------------------------------------------------------
+# Setup entrypoint to call entrypoint.sh and run sendspin with passed arguments
+# ------------------------------------------------------------
 ENTRYPOINT ["/bin/sh", "-c", "$0 \"$@\"", "sendspin"]

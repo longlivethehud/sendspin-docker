@@ -1,3 +1,6 @@
+# ------------------------------------------------------------
+# Build file for 64 bit ARM and AMD architectures
+# ------------------------------------------------------------
 FROM debian:stable
 
 # ------------------------------------------------------------
@@ -9,9 +12,15 @@ RUN apt-get update && apt-get install -y \
     pipx \
     libportaudio2
 
+# ------------------------------------------------------------
+# Install sendspin
+# ------------------------------------------------------------
 RUN pipx install sendspin && \
     pipx ensurepath
 
 ENV PATH="/root/.local/bin:${PATH}"
 
+# ------------------------------------------------------------
+# Setup entrypoint to call entrypoint.sh and run sendspin with passed arguments
+# ------------------------------------------------------------
 ENTRYPOINT ["/bin/sh", "-c", "$0 \"$@\"", "sendspin"]
