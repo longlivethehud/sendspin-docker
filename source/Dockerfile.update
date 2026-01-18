@@ -1,3 +1,0 @@
-FROM ghcr.io/longlivethehud/sendspin-docker:latest
-
-RUN pipx upgrade sendspin
