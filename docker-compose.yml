@@ -26,4 +26,4 @@ services:
       - SYS_NICE
     # Edit the command line below to pass any desired sendspin-cli arguments. 
     # Everything between [" and "] is passed as arguments to sendspin-cli on container start.
-    command: ["daemon"]
+    command: ["daemon","--disable-mpris"]
