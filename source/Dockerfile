@@ -86,7 +86,19 @@ RUN rm -rf /var/lib/apt/lists/*
 # ------------------------------------------------------------
 RUN pipx install sendspin
 
-RUN --mount=type=cache,id=upgrade-sendpsin pipx upgrade sendspin
+
+# ------------------------------------------------------------
+# Upgrade sendspin to the latest version (use --no-filter-cache command in build to always run this step)
+# ------------------------------------------------------------
+FROM final-build AS upgrade-sendspin
+
+RUN pipx upgrade sendspin
+
+
+# ------------------------------------------------------------
+# Wrap up compl0eted build and setup entrypoint
+# ------------------------------------------------------------
+FROM upgrade-sendspin AS wrap-build
 
 ENV PATH="/root/.local/bin:${PATH}"
 
