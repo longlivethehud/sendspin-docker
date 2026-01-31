@@ -100,6 +100,16 @@ RUN pipx upgrade sendspin
 # ------------------------------------------------------------
 FROM upgrade-sendspin AS wrap-build
 
+ARG VERSION 
+ARG BUILD_DATE 
+
+LABEL org.opencontainers.image.title="sendspin-docker" 
+LABEL org.opencontainers.image.description="Contains sendspin-cli release ${VERSION}" 
+LABEL org.opencontainers.image.source="https://github.com/longlivethehud/sendspin-docker" 
+LABEL org.opencontainers.image.created="$BUILD_DATE" 
+
+
+
 ENV PATH="/root/.local/bin:${PATH}"
 
 # ------------------------------------------------------------
