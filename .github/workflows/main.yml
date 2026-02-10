@@ -1,0 +1,98 @@
+name: Poll Upstream Release and Rebuild
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour
+  workflow_dispatch:
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get latest upstream release
+        id: upstream
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/Sendspin/sendspin-cli/releases/latest | jq -r .tag_name)
+          echo "LATEST_RELEASE=$LATEST" >> $GITHUB_ENV
+
+      - name: Read last built version (if exists)
+        id: local
+        run: |
+          if [ -f .last_built_version ]; then
+            echo "LAST_BUILT=$(cat .last_built_version)" >> $GITHUB_ENV
+          else
+            echo "LAST_BUILT=none" >> $GITHUB_ENV
+          fi
+
+      - name: Compare versions
+        id: compare
+        run: |
+          if [ "${{ env.LAST_BUILT }}" = "${{ env.LATEST_RELEASE }}" ]; then
+            echo "needs_build=false" >> $GITHUB_ENV
+          else
+            echo "needs_build=true" >> $GITHUB_ENV
+          fi
+
+      - name: Stop if no new release
+        if: env.needs_build == 'false'
+        run: echo "No new release. Exiting."
+
+      - name: Set up QEMU
+        if: env.needs_build == 'true'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm,arm64,amd64
+
+      - name: Set up Docker Buildx
+        if: env.needs_build == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: env.needs_build == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        if: env.needs_build == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/longlivethehud/sendspin-docker
+          tags: |
+            latest
+          labels: |
+            org.opencontainers.image.title=sendspin-docker
+            org.opencontainers.image.description=Containerized image of sendspin-cli release ${{ env.LATEST_RELEASE }}
+            org.opencontainers.image.version=${{ env.LATEST_RELEASE }}
+
+      - name: Build and push multi-platform image
+        if: env.needs_build == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./source/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v8
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
+
+      - name: Update last built version
+        if: env.needs_build == 'true'
+        run: |
+          echo "${{ env.LATEST_RELEASE }}" > .last_built_version
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add .last_built_version
+          git commit -m "Update last built version to ${{ env.LATEST_RELEASE }}"
+          git push
