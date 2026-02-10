@@ -86,6 +86,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
+          build-opts: | 
+            --no-cache-filter=upgrade-sendspin
 
       - name: Update last built version
         if: env.needs_build == 'true'
