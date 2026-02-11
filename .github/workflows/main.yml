@@ -87,7 +87,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
           sbom: false
-          attestation: false
+          attestations: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
           no-cache-filters: upgrade-sendspin
