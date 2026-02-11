@@ -12,7 +12,7 @@ jobs:
         with:
           owner-type: user
           token: ${{ secrets.PAT_TOKEN }}   # needs read:packages + delete:packages
-          repository_owner: ${{ github.repository_owner }}
+          repository_owner: ${{ github.repository-owner }}
           package-name: sendspin-docker
           delete-untagged: true
           keep-at-most: 2
