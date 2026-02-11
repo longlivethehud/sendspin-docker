@@ -1,0 +1,18 @@
+name: Clean GHCR
+on:
+  schedule:
+    - cron: "0 3 * * *"   # daily at 3 AM
+  workflow_dispatch:
+
+jobs:
+  clean:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: quartx-analytics/ghcr-cleaner@v1
+        with:
+          owner-type: user
+          token: ${{ secrets.PAT_TOKEN }}   # needs read:packages + delete:packages
+          repository_owner: ${{ github.repository_owner }}
+          package-name: sendspin-docker
+          delete-untagged: true
+          keep-at-most: 2
