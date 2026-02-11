@@ -92,16 +92,32 @@ jobs:
           cache-to: type=gha,mode=max
           no-cache-filters: upgrade-sendspin
 
-      - name: Annotate unified manifest
-        #if: env.needs_build == 'true'
+      - name: Extract architecture digests
+        if: env.needs_build == 'true'
+        id: digests
         run: |
+          echo "DIGESTS<<EOF" >> $GITHUB_ENV
+          docker buildx imagetools inspect ghcr.io/longlivethehud/sendspin-docker:latest --raw \
+            | jq -r '.manifests[].digest' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Rebuild unified manifest with annotations
+        if: env.needs_build == 'true'
+        run: |
+          # Convert DIGESTS into CLI args
+          DIGEST_ARGS=""
+          for d in $DIGESTS; do
+            DIGEST_ARGS="$DIGEST_ARGS ghcr.io/longlivethehud/sendspin-docker@$d"
+          done
+
+          # Rebuild manifest list with metadata
           docker buildx imagetools create \
             --tag ghcr.io/longlivethehud/sendspin-docker:latest \
             --annotation org.opencontainers.image.title="sendspin-docker" \
             --annotation org.opencontainers.image.description="Containerized image of sendspin-cli release ${{ env.LATEST_RELEASE }}" \
             --annotation org.opencontainers.image.version="${{ env.LATEST_RELEASE }}" \
-            ghcr.io/longlivethehud/sendspin-docker:latest
-
+            $DIGEST_ARGS
+      
       - name: Update last built version
         if: env.needs_build == 'true'
         run: |
