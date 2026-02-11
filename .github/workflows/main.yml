@@ -91,7 +91,7 @@ jobs:
           no-cache-filters: upgrade-sendspin
 
       - name: Annotate unified manifest
-        if: env.needs_build == 'true'
+        #if: env.needs_build == 'true'
         run: |
           docker buildx imagetools create \
             --tag ghcr.io/longlivethehud/sendspin-docker:latest \
