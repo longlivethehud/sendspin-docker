@@ -90,6 +90,16 @@ jobs:
           cache-to: type=gha,mode=max
           no-cache-filters: upgrade-sendspin
 
+      - name: Annotate unified manifest
+        if: env.needs_build == 'true'
+        run: |
+          docker buildx imagetools create \
+            --tag ghcr.io/longlivethehud/sendspin-docker:latest \
+            --annotation org.opencontainers.image.title="sendspin-docker" \
+            --annotation org.opencontainers.image.description="Containerized image of sendspin-cli release ${{ env.LATEST_RELEASE }}" \
+            --annotation org.opencontainers.image.version="${{ env.LATEST_RELEASE }}" \
+            ghcr.io/longlivethehud/sendspin-docker:latest
+
       - name: Update last built version
         if: env.needs_build == 'true'
         run: |
