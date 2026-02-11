@@ -1,8 +1,8 @@
 name: Poll Upstream Release and Rebuild
 
 on:
-  #schedule:
-  #  - cron: "0 * * * *"   # every hour
+  schedule:
+    - cron: "0 3 * * *"   
   workflow_dispatch:
 
 jobs:
@@ -86,6 +86,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
+          sbom: false
+          attestation: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
           no-cache-filters: upgrade-sendspin
