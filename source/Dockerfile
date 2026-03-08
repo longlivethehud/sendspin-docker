@@ -24,7 +24,9 @@ RUN case "$TARGETPLATFORM" in \
             pkg-config \
             python3-dev \
             libffi-dev \
-            libjpeg-dev ; \
+            libjpeg-dev \
+            liblapack-dev \
+            libblas-dev ; \
             ;; \
     *) \
         echo "Skipping 32bit ARM dependencies" ; \
