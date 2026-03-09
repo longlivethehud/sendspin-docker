@@ -63,7 +63,9 @@ RUN case "$TARGETPLATFORM" in \
         pkg-config \
         python3 \
         python3-pip \
-        pipx ; \
+        pipx \
+        liblapack3 \
+        libblas3 ; \
         ;; \
     *) \
         echo "Installing 64bit runtime dependencies" ; \
